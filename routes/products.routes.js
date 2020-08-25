@@ -12,11 +12,10 @@ router.get('/products', (req, res) => {
   });
 });
 
-router.get('/products/:id', (req, res) => {
-  req.db.collection('products').findOne({ _id: ObjectId(req.params.id) }, (err, data) => {
+router.get('/products/random', (req, res) => {
+  req.db.collection('products').aggregate([ { $sample: { size: 1 } } ]).toArray((err, data) => {
     if(err) res.status(500).json({ message: err });
-    else if(!data) res.status(404).json({ message: 'Not found' });
-    else res.json(data);
+    else res.json(data[0]);
   });
 });
 
@@ -37,7 +36,7 @@ router.post('/products', (req, res) => {
 });
 
 router.put('/products/:id', (req, res) => {
-  const { name } = req.body;
+  const { name, client } = req.body;
   req.db.collection('products').updateOne({ _id: ObjectId(req.params.id) }, { $set: { name: name, client: client }}, err => {
     if(err) res.status(500).json({ message: err });
     else res.json({ message: 'OK' });

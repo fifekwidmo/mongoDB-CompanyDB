@@ -78,4 +78,4 @@ exports.deleteId = async (req, res) => {
   }
 };
 
-module.exports = router;
+
